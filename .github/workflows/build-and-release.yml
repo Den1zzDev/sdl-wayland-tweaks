@@ -78,11 +78,12 @@ jobs:
           fi
 
       - name: Publish to Modrinth
+        if: env.MODRINTH_TOKEN != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: sdl-wayland-tweaks
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          files: release-artifacts/!(*-@(dev|sources)).jar
+          files: release-artifacts/*.jar
           name: "SDL Wayland Tweaks ${{ github.ref_name }}"
           version: ${{ github.ref_name }}
           version-type: release
@@ -94,3 +95,5 @@ jobs:
           dependencies: |
             fabric-api(required)
             modmenu(optional)
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
