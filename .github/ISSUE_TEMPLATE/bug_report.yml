@@ -1,0 +1,44 @@
+name: Bug report
+description: Create a report to help us fix an issue with SDL Wayland Tweaks
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report an issue!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: System Environment
+      description: Please share your Linux OS, desktop/compositor, and graphics hardware.
+      placeholder: |
+        OS: AerynOS 2026 / Arch Linux / Fedora 43
+        Desktop/Compositor: COSMIC (cosmic-comp) / GNOME 49 / Sway / Hyprland
+        GPU / Driver: AMD Radeon (RADV / Mesa 26.x) / Intel / NVIDIA 590.x
+        Minecraft Version: 26.3
+        Fabric Loader Version: 0.19.x
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this behavior?
+      placeholder: |
+        1. Launch game on Wayland
+        2. Toggle fullscreen
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or Console Output
+      description: Paste any relevant logs or terminal output.
+      render: shell
