@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.den1zz.sdlwayland.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ClipboardManagerMixin",
+    "EditBoxMixin",
+    "MouseHandlerMixin",
+    "WindowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

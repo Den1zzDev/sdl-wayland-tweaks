@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "sdl-wayland-tweaks",
+  "version": "${version}",
+  "name": "SDL Wayland Tweaks",
+  "description": "High-performance native Wayland enhancements and SDL3 optimizations for Minecraft on Linux.",
+  "authors": [
+    "Den1zz"
+  ],
+  "contact": {
+    "homepage": "https://den1zz.dev",
+    "sources": "https://github.com/Den1zzDev/sdl-wayland-tweaks"
+  },
+  "license": "MIT",
+  "icon": "assets/sdl-wayland-tweaks/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.den1zz.sdlwayland.SdlWaylandTweaks"
+    ],
+    "modmenu": [
+      "dev.den1zz.sdlwayland.gui.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "sdl-wayland-tweaks.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}"
+  }
+}
