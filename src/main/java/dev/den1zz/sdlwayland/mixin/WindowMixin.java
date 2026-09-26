@@ -24,7 +24,7 @@ public abstract class WindowMixin {
         method = "<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;ZLjava/lang/String;Lcom/mojang/blaze3d/platform/MonitorManager;Lcom/mojang/renderpearl/api/device/GpuBackend;I)V",
         at = @At("HEAD")
     )
-    private void sdlwt$preInitHints(
+    private static void sdlwt$preInitHints(
         WindowEventHandler windowEventHandler,
         DisplayData displayData,
         String string,
