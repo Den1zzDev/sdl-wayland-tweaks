@@ -1,57 +1,42 @@
 # Contributing to SDL Wayland Tweaks
 
-Thank you for your interest in improving SDL Wayland Tweaks! This project aims to bring native Wayland ergonomics and low-latency SDL3 graphics/input tuning to modern Minecraft on Linux desktops.
+Anyone is free and encouraged to contribute. Whether you want to fix a bug, adapt a new Wayland protocol extension, clean up an SDL3 hint, or rewrite a mixin, your PR is welcome.
 
-## Getting Started
+## Code origin and AI disclosure
 
-### Prerequisites
+This project was built heavily with AI assistance. I believe in using modern tools to solve Linux desktop friction quickly.
 
-- **Java Development Kit (JDK) 25** (e.g. Eclipse Temurin or OpenJDK 25)
-- **Git**
-- A Linux environment with a Wayland compositor (COSMIC, GNOME Shell, Sway, Hyprland, KDE Plasma 6, etc.) to test runtime behavior.
+Because of that, you do not need to hide your tools here. You can write your PR entirely by hand, use an LLM to scaffold it, or have an agent do the heavy lifting. All of those are accepted.
 
-### Setting Up Local Environment
+The only requirement is to disclose it:
+- If you used an AI assistant or LLM, say so in your PR description. Mention which model or tool you used if possible.
+- If you wrote the code by hand without AI generation, say that instead.
 
-1. Fork and clone the repository:
-   ```bash
-   git clone https://github.com/Den1zzDev/sdl-wayland-tweaks.git
-   cd sdl-wayland-tweaks
-   ```
+This disclosure lets reviewers focus their review. Generated code usually needs closer inspection around null checks, concurrency, and undocumented API changes, while handwritten code usually needs different checks.
 
-2. Compile and package the mod:
-   ```bash
-   ./gradlew assemble
-   ```
+## Development setup
 
-   The compiled jar will be located in `build/libs/sdl-wayland-tweaks-<minecraft-version>-<mod-version>.jar`.
+### Requirements
 
-3. Launch Minecraft test client in development:
-   ```bash
-   ./gradlew runClient
-   ```
+- JDK 25 (Temurin, OpenJDK, or your distro package)
+- A Linux desktop running a Wayland compositor (COSMIC, GNOME, KDE, Sway, Hyprland, etc.)
 
-## Development Guidelines
+### Build commands
 
-1. **Keep It Pure & Focused**:
-   - Only implement features and patches related to SDL3, Wayland protocols (`wl_surface`, `xdg_toplevel`, `wp_tearing_control_v1`, etc.), Linux input, or desktop clipboard/windowing ergonomics.
-   - Avoid game-modifying gameplay mechanics or unrelated client features.
-2. **Follow Loom / Fabric Standards**:
-   - Mixins should target specific methods cleanly with minimal invasiveness.
-   - Prioritize `@Inject` and cancel or mutate return values safely.
-   - Support ModMenu integration where applicable.
-3. **Commit Messages**:
-   - Use conventional commit style:
-     - `feat: ...` for new features
-     - `fix: ...` for bug fixes
-     - `docs: ...` for documentation
-     - `refactor: ...` for code refactoring
-     - `ci: ...` for GitHub Actions changes
+Build the mod jar:
+```bash
+./gradlew assemble
+```
 
-## Reporting Issues
+Run a test client:
+```bash
+./gradlew runClient
+```
 
-If you encounter bugs, screen tearing issues, improper scaling, or input bugs:
-- Check existing issues to see if it has already been reported.
-- Open an issue describing your:
-  - Linux distribution and desktop compositor (e.g., AerynOS with COSMIC `cosmic-comp`, Arch with Sway, Fedora with GNOME).
-  - GPU backend and graphics driver (Mesa RADV, NVIDIA proprietary, etc.).
-  - Steps to reproduce and any relevant log entries.
+The built jar lands in `build/libs/sdl-wayland-tweaks-26.3-1.0.0.jar`.
+
+## Submission guidelines
+
+1. Test your change on a real Wayland session before submitting.
+2. Keep changes focused on Wayland, SDL3, Linux input, or windowing behavior.
+3. Keep commit messages plain and descriptive.
