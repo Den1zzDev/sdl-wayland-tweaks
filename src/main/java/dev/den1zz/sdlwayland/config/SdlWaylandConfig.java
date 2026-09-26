@@ -24,6 +24,7 @@ public class SdlWaylandConfig {
     public boolean focusGrabRecovery = true;
     public boolean imeControlCharFiltering = true;
     public boolean primarySelectionSync = true;
+    public boolean middleClickPaste = false;
     public boolean asyncPageFlip = false;
 
     // Relative mouse & desktop tuning

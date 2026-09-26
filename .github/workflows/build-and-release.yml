@@ -42,7 +42,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    name: Publish GitHub Release
+    name: Publish Release
     needs: build
     if: startsWith(github.ref, "refs/tags/v")
     runs-on: ubuntu-latest
@@ -58,6 +58,7 @@ jobs:
           path: release-artifacts/
 
       - name: Create GitHub Release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           files: release-artifacts/*.jar
@@ -66,3 +67,30 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch Release Notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view "${{ github.ref_name }}" --json body -q .body > release-notes.md 2>/dev/null || true
+          if [ ! -s release-notes.md ]; then
+            echo "Release ${{ github.ref_name }}: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}" > release-notes.md
+          fi
+
+      - name: Publish to Modrinth
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: sdl-wayland-tweaks
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: release-artifacts/!(*-@(dev|sources)).jar
+          name: "SDL Wayland Tweaks ${{ github.ref_name }}"
+          version: ${{ github.ref_name }}
+          version-type: release
+          changelog-file: release-notes.md
+          loaders: |
+            fabric
+          game-versions: |
+            26.3
+          dependencies: |
+            fabric-api(required)
+            modmenu(optional)

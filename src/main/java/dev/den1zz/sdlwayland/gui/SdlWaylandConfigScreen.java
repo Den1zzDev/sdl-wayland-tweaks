@@ -20,7 +20,7 @@ public class SdlWaylandConfigScreen extends Screen {
     protected void init() {
         SdlWaylandConfig cfg = SdlWaylandConfig.get();
         int centerX = this.width / 2;
-        int y = 40;
+        int y = 35;
         int btnWidth = 190;
         int btnHeight = 20;
         int spacing = 24;
@@ -67,6 +67,12 @@ public class SdlWaylandConfigScreen extends Screen {
         this.addRenderableWidget(createToggle(col1, y, btnWidth, btnHeight, "Prevent Minimize", cfg.preventMinimizeOnFocusLoss, val -> cfg.preventMinimizeOnFocusLoss = val));
         // 12. Focus Clickthrough
         this.addRenderableWidget(createToggle(col2, y, btnWidth, btnHeight, "Focus Clickthrough", cfg.focusClickthrough, val -> cfg.focusClickthrough = val));
+        y += spacing;
+
+        // 13. Middle Click Paste
+        this.addRenderableWidget(createToggle(col1, y, btnWidth, btnHeight, "Middle-Click Paste", cfg.middleClickPaste, val -> cfg.middleClickPaste = val));
+        // 14. Motion Delta Accumulation
+        this.addRenderableWidget(createToggle(col2, y, btnWidth, btnHeight, "Motion Delta Accum.", cfg.motionDeltaAccumulation, val -> cfg.motionDeltaAccumulation = val));
         y += spacing + 10;
 
         // Done button
@@ -89,7 +95,7 @@ public class SdlWaylandConfigScreen extends Screen {
     @Override
     public void extractRenderState(GuiGraphicsExtractor guiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(guiGraphicsExtractor, mouseX, mouseY, partialTick);
-        guiGraphicsExtractor.centeredText(this.font, this.title, this.width / 2, 16, 0xFFFFFF);
+        guiGraphicsExtractor.centeredText(this.font, this.title, this.width / 2, 14, 0xFFFFFF);
     }
 
     @Override

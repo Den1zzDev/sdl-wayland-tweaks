@@ -69,6 +69,10 @@ public class Sdl3WindowManager {
                 SDLHints.SDL_SetHintWithPriority(SDLHints.SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "0", SDLHints.SDL_HINT_OVERRIDE);
             }
 
+            if (cfg.asyncPageFlip) {
+                SDLHints.SDL_SetHintWithPriority("SDL_VIDEO_WAYLAND_ALLOW_TEARING", "1", SDLHints.SDL_HINT_OVERRIDE);
+            }
+
             if (cfg.bypassCompositor) {
                 SDLHints.SDL_SetHintWithPriority(SDLHints.SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "1", SDLHints.SDL_HINT_OVERRIDE);
             }
@@ -120,6 +124,11 @@ public class Sdl3WindowManager {
 
     public static void applySwapInterval(boolean tearing) {
         try {
+            SDLHints.SDL_SetHintWithPriority(
+                "SDL_VIDEO_WAYLAND_ALLOW_TEARING",
+                tearing ? "1" : "0",
+                SDLHints.SDL_HINT_OVERRIDE
+            );
             int interval = tearing ? 0 : 1;
             SDLVideo.SDL_GL_SetSwapInterval(interval);
             SDLHints.SDL_SetHintWithPriority(

@@ -4,6 +4,7 @@
   "package": "dev.den1zz.sdlwayland.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "AbstractWidgetMixin",
     "ClipboardManagerMixin",
     "EditBoxMixin",
     "MouseHandlerMixin",
