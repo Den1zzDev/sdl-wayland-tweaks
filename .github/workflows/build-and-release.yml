@@ -44,7 +44,7 @@ jobs:
   release:
     name: Publish Release
     needs: build
-    if: startsWith(github.ref, "refs/tags/v")
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
@@ -78,7 +78,7 @@ jobs:
           fi
 
       - name: Publish to Modrinth
-        if: env.MODRINTH_TOKEN != ''
+        if: secrets.MODRINTH_TOKEN != ''
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: sdl-wayland-tweaks
@@ -95,5 +95,3 @@ jobs:
           dependencies: |
             fabric-api(required)
             modmenu(optional)
-        env:
-          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
