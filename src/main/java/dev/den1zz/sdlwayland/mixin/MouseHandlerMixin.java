@@ -36,39 +36,64 @@ public abstract class MouseHandlerMixin {
             return;
         }
 
-        // Prevent large-angle float truncation jitter by wrapping yaw to [-180, 180]
-        float wrappedYRot = Mth.wrapDegrees(player.getYRot());
-        player.setYRot(wrappedYRot);
-        player.yRotO = Mth.wrapDegrees(player.yRotO);
+        // Prevent large-angle float truncation jitter by wrapping yaw to [-180, 180].
+        // Both yRot and yRotO must receive identical offset to avoid an interpolation snap across the 180 boundary.
+        float currentYRot = player.getYRot();
+        float wrappedYRot = Mth.wrapDegrees(currentYRot);
+        if (wrappedYRot != currentYRot) {
+            float diff = wrappedYRot - currentYRot;
+            player.setYRot(wrappedYRot);
+            player.yRotO += diff;
+        }
+
+        // Only compute sub-pixel remainder if there is actual input movement
+        if (Math.abs(this.accumulatedDX) < 1e-7 && Math.abs(this.accumulatedDY) < 1e-7) {
+            return;
+        }
 
         double sensitivity = (Double) this.minecraft.options.sensitivity().get() * 0.6 + 0.2;
         double factor = sensitivity * sensitivity * sensitivity;
-        if (!player.isScoping()) {
+        if (this.minecraft.options.getCameraType().isFirstPerson() && player.isScoping()) {
+            // Unmultiplied factor during first-person scoping
+        } else {
             factor *= 8.0;
         }
+
         if (factor == 0.0) {
             return;
         }
 
-        double turnStep = factor * 0.15;
-        double targetRotX = this.accumulatedDX * turnStep;
-        double targetRotY = this.accumulatedDY * turnStep;
+        boolean invertX = this.minecraft.options.invertMouseX().get();
+        boolean invertY = this.minecraft.options.invertMouseY().get();
 
-        float appliedRotX = (float) targetRotX;
-        float appliedRotY = (float) targetRotY;
+        double d3 = this.accumulatedDX * factor * (invertX ? -1.0 : 1.0);
+        double d5 = this.accumulatedDY * factor * (invertY ? -1.0 : 1.0);
 
-        double remRotX = targetRotX - (double) appliedRotX;
-        double remRotY = targetRotY - (double) appliedRotY;
+        // Minecraft's Entity.turn multiplies by 0.15F after casting to float
+        double targetYaw = d3 * 0.15;
+        double targetPitch = d5 * 0.15;
 
-        this.sdlwt$remainderDX = remRotX / turnStep;
-        this.sdlwt$remainderDY = remRotY / turnStep;
+        float appliedYaw = (float) d3 * 0.15F;
+        float appliedPitch = (float) d5 * 0.15F;
+
+        double remYaw = targetYaw - (double) appliedYaw;
+        double remPitch = targetPitch - (double) appliedPitch;
+
+        double divisor = factor * 0.15;
+        this.sdlwt$remainderDX = (remYaw / divisor) * (invertX ? -1.0 : 1.0);
+        this.sdlwt$remainderDY = (remPitch / divisor) * (invertY ? -1.0 : 1.0);
     }
 
     @Inject(method = "handleAccumulatedMovement", at = @At("RETURN"))
     private void sdlwt$handleAccumulatedMovement(CallbackInfo ci) {
         if (this.mouseGrabbed && SdlWaylandConfig.get().motionDeltaAccumulation && Sdl3WindowManager.isWaylandDriver()) {
-            this.accumulatedDX += this.sdlwt$remainderDX;
-            this.accumulatedDY += this.sdlwt$remainderDY;
+            // Only feed back remainder if the accumulated residual is meaningful
+            if (Math.abs(this.sdlwt$remainderDX) > 1e-5) {
+                this.accumulatedDX += this.sdlwt$remainderDX;
+            }
+            if (Math.abs(this.sdlwt$remainderDY) > 1e-5) {
+                this.accumulatedDY += this.sdlwt$remainderDY;
+            }
             this.sdlwt$remainderDX = 0.0;
             this.sdlwt$remainderDY = 0.0;
         }

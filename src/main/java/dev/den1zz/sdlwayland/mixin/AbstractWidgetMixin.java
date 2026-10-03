@@ -5,6 +5,7 @@ import dev.den1zz.sdlwayland.config.SdlWaylandConfig;
 import dev.den1zz.sdlwayland.sdl.Sdl3WindowManager;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.MultiLineEditBox;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.util.StringDecomposer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,6 +34,14 @@ public abstract class AbstractWidgetMixin {
                 String primary = Sdl3WindowManager.getPrimarySelectionText();
                 if (primary != null && !primary.isEmpty()) {
                     editBox.insertText(StringDecomposer.filterBrokenSurrogates(primary));
+                }
+                cir.setReturnValue(true);
+            } else if ((Object) this instanceof MultiLineEditBox multiLineEditBox) {
+                multiLineEditBox.setFocused(true);
+                multiLineEditBox.onClick(event, doubleClick);
+                String primary = Sdl3WindowManager.getPrimarySelectionText();
+                if (primary != null && !primary.isEmpty()) {
+                    ((MultiLineEditBoxAccessor) multiLineEditBox).sdlwt$getTextField().insertText(StringDecomposer.filterBrokenSurrogates(primary));
                 }
                 cir.setReturnValue(true);
             }

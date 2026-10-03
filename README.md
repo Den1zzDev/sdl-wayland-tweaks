@@ -7,13 +7,14 @@ A lightweight Fabric mod that adds native Wayland adjustments and SDL3 windowing
 - Sets Wayland display scaling (`SDL_HINT_VIDEO_WAYLAND_SCALE_TO_DISPLAY = "1"`), double-buffering, and server-side decoration hints before window initialization.
 - Sets the Wayland `app_id` to `minecraft` and injects desktop metadata so compositors (such as GNOME, KDE, and COSMIC) group the window on the dock and taskbar properly.
 - Drops the 1-pixel borderless window padding that Minecraft leaves on screen under Wayland.
-- Re-locks cursor and keyboard grabs when Minecraft regains focus after an Alt+Tab or workspace switch.
+- Re-locks cursor, relative pointer mode (`SDL_SetWindowRelativeMouseMode`), and keyboard grabs when Minecraft regains focus after an Alt+Tab or workspace switch.
 - Syncs text with the Linux primary selection buffer using SDL3, letting you paste highlighted text.
-- Optional middle-click paste directly into text fields from the Linux primary selection buffer (off by default).
-- Filters out non-printable ASCII control characters below 32 that certain Wayland IME inputs send into chat boxes.
-- Sets the Wayland tearing protocol hint (`SDL_VIDEO_WAYLAND_ALLOW_TEARING`) and swap interval so compositors supporting `wp_tearing_control_v1` can tear without tearing being blocked.
-- Preserves fractional mouse motion deltas across frames without truncation loss and wraps yaw angles to prevent float precision jitter.
-- Includes an in-game ModMenu settings screen saved to `config/sdl-wayland-tweaks.json`.
+- Middle-click paste directly into single-line and multi-line text fields (`EditBox` and `MultiLineEditBox`) from the Linux primary selection buffer.
+- Strips unhandled ASCII control characters below 32 emitted by Wayland IME engines globally before they reach screens or chat.
+- Sets the OpenGL swap interval to 0 and reconfigures RenderPearl presentation so compositors supporting `wp_tearing_control_v1` (such as KDE Plasma 6, Hyprland, and COSMIC) can tear for lower input latency when V-Sync is disabled.
+- Preserves fractional mouse motion deltas across active frames without truncation loss, wraps yaw angles to prevent float precision jitter, and maintains camera interpolation delta invariance across angle boundaries.
+- Applies configuration toggles dynamically at runtime without requiring a game restart.
+- Includes an in-game ModMenu settings screen with detailed tooltips and responsive layout, saved to `config/sdl-wayland-tweaks.json`.
 
 ## Transparency about AI
 

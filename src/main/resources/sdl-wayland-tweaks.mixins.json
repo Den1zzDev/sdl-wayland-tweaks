@@ -7,7 +7,9 @@
     "AbstractWidgetMixin",
     "ClipboardManagerMixin",
     "EditBoxMixin",
+    "KeyboardHandlerMixin",
     "MouseHandlerMixin",
+    "MultiLineEditBoxAccessor",
     "WindowMixin"
   ],
   "injectors": {

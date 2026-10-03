@@ -4,12 +4,18 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
+| 1.2.x   | :white_check_mark: |
+| 1.1.x   | :x:                |
+| 1.0.x   | :x:                |
+
+Only the latest release branch receives security patches and vulnerability updates. Users on earlier versions should upgrade to 1.2.x.
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within SDL Wayland Tweaks:
+If you discover a security vulnerability in SDL Wayland Tweaks:
 
-1. Please do **not** open a public issue.
-2. Report the vulnerability privately via GitHub Security Advisories or email `contact@den1zz.dev`.
-3. Provide as much detail as possible to help reproduce and resolve the issue safely.
+1. Do not open a public issue.
+2. Report the vulnerability privately through GitHub Security Advisories or by emailing `deniz@den1zz.dev`.
+3. Include details, reproduction steps, affected desktop environments, and proof of concept where possible.
+
+Reports are reviewed promptly and addressed in the next maintenance release.

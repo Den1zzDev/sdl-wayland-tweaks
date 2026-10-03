@@ -69,4 +69,11 @@ public abstract class WindowMixin {
             Sdl3WindowManager.reassertGrabs();
         }
     }
+
+    @Inject(method = "onFramebufferResize", at = @At("RETURN"))
+    private void sdlwt$onFramebufferResize(int width, int height, CallbackInfo ci) {
+        if (Sdl3WindowManager.isWaylandDriver()) {
+            Sdl3WindowManager.updateDisplayMetrics(this.handle);
+        }
+    }
 }
