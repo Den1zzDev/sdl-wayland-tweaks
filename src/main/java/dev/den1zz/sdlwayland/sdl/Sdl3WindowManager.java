@@ -6,7 +6,6 @@ import org.lwjgl.sdl.SDLClipboard;
 import org.lwjgl.sdl.SDLHints;
 import org.lwjgl.sdl.SDLInit;
 import org.lwjgl.sdl.SDLMouse;
-import org.lwjgl.sdl.SDLProperties;
 import org.lwjgl.sdl.SDLVideo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,7 @@ public class Sdl3WindowManager {
 
     private static volatile long windowHandle = 0;
     private static volatile boolean waylandDetected = false;
-    private static volatile long wlDisplay = 0;
-    private static volatile long wlSurface = 0;
-    private static volatile long xdgToplevel = 0;
-    private static volatile float displayScale = 1.0f;
-    private static volatile float pixelDensity = 1.0f;
+    private static volatile Boolean lastAppliedTearing = null;
 
     public static void preInitHints() {
         SdlWaylandConfig cfg = SdlWaylandConfig.get();
@@ -121,33 +116,15 @@ public class Sdl3WindowManager {
             waylandDetected = "wayland".equalsIgnoreCase(driver);
 
             if (waylandDetected) {
-                int props = SDLVideo.SDL_GetWindowProperties(handle);
-                wlDisplay = SDLProperties.SDL_GetPointerProperty(props, SDLVideo.SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, 0L);
-                wlSurface = SDLProperties.SDL_GetPointerProperty(props, SDLVideo.SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, 0L);
-                xdgToplevel = SDLProperties.SDL_GetPointerProperty(props, SDLVideo.SDL_PROP_WINDOW_WAYLAND_XDG_TOPLEVEL_POINTER, 0L);
-
-                displayScale = SDLVideo.SDL_GetWindowDisplayScale(handle);
-                pixelDensity = SDLVideo.SDL_GetWindowPixelDensity(handle);
-
                 SDLVideo.SDL_SyncWindow(handle);
                 applySwapInterval(SdlWaylandConfig.get().asyncPageFlip);
-
-                LOGGER.info("[Wayland] Attached native window (handle=0x{}, wl_surface=0x{}, xdg_toplevel=0x{}, scale={}, density={})",
-                    Long.toHexString(handle), Long.toHexString(wlSurface), Long.toHexString(xdgToplevel), displayScale, pixelDensity);
+                LOGGER.info("[Wayland] Attached native window (handle=0x{}, driver={})",
+                    Long.toHexString(handle), driver);
             } else {
                 LOGGER.info("[SDL3] Video driver active: {}", driver);
             }
         } catch (Throwable t) {
             LOGGER.warn("Failed to inspect SDL3 window properties: {}", t.getMessage());
-        }
-    }
-
-    public static void updateDisplayMetrics(long handle) {
-        if (handle == 0) return;
-        try {
-            displayScale = SDLVideo.SDL_GetWindowDisplayScale(handle);
-            pixelDensity = SDLVideo.SDL_GetWindowPixelDensity(handle);
-        } catch (Throwable ignored) {
         }
     }
 
@@ -163,21 +140,19 @@ public class Sdl3WindowManager {
     }
 
     public static void applySwapInterval(boolean tearing) {
+        if (lastAppliedTearing != null && lastAppliedTearing == tearing) {
+            return;
+        }
+        lastAppliedTearing = tearing;
+
         try {
-            int interval = tearing ? 0 : 1;
-            SDLVideo.SDL_GL_SetSwapInterval(interval);
-            SDLHints.SDL_SetHintWithPriority(
-                SDLHints.SDL_HINT_RENDER_VSYNC,
-                tearing ? "0" : "1",
-                SDLHints.SDL_HINT_OVERRIDE
-            );
             Minecraft mc = Minecraft.getInstance();
             if (mc != null) {
                 mc.invalidateSurfaceConfiguration();
+                LOGGER.info("[SDL3] Requested surface present mode update (async tearing={})", tearing);
             }
-            LOGGER.info("[SDL3] Applied swap interval: {} (async tearing={})", interval, tearing);
         } catch (Throwable t) {
-            LOGGER.warn("Failed to set SDL3 swap interval: {}", t.getMessage());
+            LOGGER.warn("Failed to update surface configuration: {}", t.getMessage());
         }
     }
 
@@ -213,17 +188,5 @@ public class Sdl3WindowManager {
         } catch (Throwable ignored) {
         }
         return "";
-    }
-
-    public static long getWlSurface() {
-        return wlSurface;
-    }
-
-    public static float getDisplayScale() {
-        return displayScale;
-    }
-
-    public static float getPixelDensity() {
-        return pixelDensity;
     }
 }

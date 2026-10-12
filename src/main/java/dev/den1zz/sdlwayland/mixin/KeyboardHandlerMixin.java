@@ -16,7 +16,8 @@ public abstract class KeyboardHandlerMixin {
     private void sdlwt$filterGlobalImeControlChars(long handle, CharacterEvent event, CallbackInfo ci) {
         if (SdlWaylandConfig.get().imeControlCharFiltering && Sdl3WindowManager.isWaylandDriver()) {
             int codePoint = event.codepoint();
-            if (codePoint < 32 && codePoint != 8 && codePoint != 10 && codePoint != 13) {
+            // Allow backspace (8), tab (9), newline (10), carriage return (13)
+            if (codePoint < 32 && codePoint != 8 && codePoint != 9 && codePoint != 10 && codePoint != 13) {
                 ci.cancel();
             }
         }

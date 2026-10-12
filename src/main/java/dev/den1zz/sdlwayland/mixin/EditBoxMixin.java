@@ -16,7 +16,7 @@ public abstract class EditBoxMixin {
     private void sdlwt$filterWaylandImeControlChars(CharacterEvent event, CallbackInfoReturnable<Boolean> cir) {
         if (SdlWaylandConfig.get().imeControlCharFiltering && Sdl3WindowManager.isWaylandDriver()) {
             int codePoint = event.codepoint();
-            if (codePoint < 32 && codePoint != 8 && codePoint != 10 && codePoint != 13) {
+            if (codePoint < 32 && codePoint != 8 && codePoint != 9 && codePoint != 10 && codePoint != 13) {
                 cir.setReturnValue(false);
             }
         }

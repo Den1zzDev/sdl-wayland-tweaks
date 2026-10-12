@@ -6,10 +6,12 @@
   "client": [
     "AbstractWidgetMixin",
     "ClipboardManagerMixin",
+    "EditBoxAccessor",
     "EditBoxMixin",
     "KeyboardHandlerMixin",
     "MouseHandlerMixin",
     "MultiLineEditBoxAccessor",
+    "PresentModeMixin",
     "WindowMixin"
   ],
   "injectors": {

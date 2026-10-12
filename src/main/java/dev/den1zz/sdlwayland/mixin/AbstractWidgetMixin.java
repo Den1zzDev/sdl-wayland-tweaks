@@ -29,6 +29,9 @@ public abstract class AbstractWidgetMixin {
 
         if (event.button() == InputConstants.MOUSE_BUTTON_MIDDLE && this.isActive() && this.visible && this.isMouseOver(event.x(), event.y())) {
             if ((Object) this instanceof EditBox editBox) {
+                if (!((EditBoxAccessor) editBox).sdlwt$isEditable()) {
+                    return;
+                }
                 editBox.setFocused(true);
                 editBox.onClick(event, doubleClick);
                 String primary = Sdl3WindowManager.getPrimarySelectionText();

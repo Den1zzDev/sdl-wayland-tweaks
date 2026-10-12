@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -56,6 +57,21 @@ public abstract class WindowMixin {
         Sdl3WindowManager.onWindowCreated(this.handle);
     }
 
+    @ModifyArg(
+        method = "applyBorderlessFullscreenWindow",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/platform/Window;setWindowSizeAndPosition(IIII)Z"
+        ),
+        index = 2
+    )
+    private int sdlwt$fixBorderlessWindowWidth(int width) {
+        if (SdlWaylandConfig.get().fixBorderlessPadding && Sdl3WindowManager.isWaylandDriver()) {
+            return width - 1;
+        }
+        return width;
+    }
+
     @Inject(method = "framebufferWidthPadding", at = @At("HEAD"), cancellable = true)
     private void sdlwt$fixBorderlessPadding(CallbackInfoReturnable<Integer> cir) {
         if (SdlWaylandConfig.get().fixBorderlessPadding && Sdl3WindowManager.isWaylandDriver()) {
@@ -67,13 +83,6 @@ public abstract class WindowMixin {
     private void sdlwt$onFocus(boolean focused, CallbackInfo ci) {
         if (focused && SdlWaylandConfig.get().focusGrabRecovery && Sdl3WindowManager.isWaylandDriver()) {
             Sdl3WindowManager.reassertGrabs();
-        }
-    }
-
-    @Inject(method = "onFramebufferResize", at = @At("RETURN"))
-    private void sdlwt$onFramebufferResize(int width, int height, CallbackInfo ci) {
-        if (Sdl3WindowManager.isWaylandDriver()) {
-            Sdl3WindowManager.updateDisplayMetrics(this.handle);
         }
     }
 }
